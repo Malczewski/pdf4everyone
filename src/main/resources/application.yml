@@ -1,7 +1,16 @@
+spring:
+  application:
+    name: pdf-service
+
 server:
   port: 9000
   servlet:
     context-path: /api
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
 
 executor:
   pool:
