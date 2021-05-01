@@ -1,6 +1,14 @@
 server:
   port: 9000
-  context-path: /api
+  servlet:
+    context-path: /api
+
+executor:
+  pool:
+    corePoolSize: 3
+    maxPoolSize: 6
+    keepAliveSeconds: 100
+    threadPrefix: 30
 
 logging:
   level:
@@ -10,3 +18,8 @@ logging:
 management:
   endpoints:
     enabled-by-default: true
+
+webdriver:
+  chrome:
+    driver: C:/Programs/bin/chromedriver.exe
+    binary: C:/Programs/chrome87/chrome.exe
