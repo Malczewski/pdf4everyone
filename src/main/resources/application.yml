@@ -23,3 +23,9 @@ webdriver:
   chrome:
     driver: C:/Programs/bin/chromedriver.exe
     binary: C:/Programs/chrome87/chrome.exe
+  timeouts:
+    conditionalDelay:
+      pollingEverySeconds: 5
+      maxSeconds: 60
+    fixedDelay:
+      maxSeconds: 60

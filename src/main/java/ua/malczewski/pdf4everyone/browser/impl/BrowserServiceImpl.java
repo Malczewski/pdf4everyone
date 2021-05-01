@@ -10,10 +10,11 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 import ua.malczewski.pdf4everyone.browser.BrowserFactory;
 import ua.malczewski.pdf4everyone.browser.BrowserService;
+import ua.malczewski.pdf4everyone.config.ConditionalTimeoutProperties;
+import ua.malczewski.pdf4everyone.config.FixedTimeoutProperties;
 import ua.malczewski.pdf4everyone.rest.api.dto.ExportParameters;
 
 import javax.annotation.PostConstruct;
-import java.util.concurrent.Future;
 
 @Service
 public class BrowserServiceImpl implements BrowserService {
@@ -26,6 +27,10 @@ public class BrowserServiceImpl implements BrowserService {
 	private Environment environment;
 	@Autowired
 	private BrowserFactory browserFactory;
+	@Autowired
+	private FixedTimeoutProperties fixedTimeoutProperties;
+	@Autowired
+	private ConditionalTimeoutProperties conditionalTimeoutProperties;
 
 	@PostConstruct
 	private void init() {
@@ -45,29 +50,25 @@ public class BrowserServiceImpl implements BrowserService {
 	@SneakyThrows
 	@Override
 	public byte[] exportScreenshot(ExportParameters parameters) {
-		BrowserFlow flow = BrowserFlow.builder()
-				.addStep(BrowserActions.size(parameters.getWidth(), parameters.getHeight()))
-				.addStep(BrowserActions.openUrl(parameters.getUrl()))
-				.addStep(BrowserActions.sleep(parameters.getDelayMs()))
-				.finish(BrowserActions.screenshot());
-		Future<byte[]> resultFuture = executor.submit(() -> {
-			return flow.process(browserFactory.getBrowser());
-		});
-		return resultFuture.get();
+		BrowserFlow flow = getFlowBuilder(parameters).perform(BrowserActions.screenshot());
+		return executor.submit(() -> flow.process(browserFactory.getBrowser())).get();
 	}
 
 	@SneakyThrows
 	@Override
 	public byte[] exportPDF(ExportParameters parameters) {
-		BrowserFlow flow = BrowserFlow.builder()
+		BrowserFlow flow = getFlowBuilder(parameters).perform(BrowserActions.pdf());
+		return executor.submit(() -> flow.process(browserFactory.getBrowser())).get();
+	}
+
+	private BrowserFlow.BrowserFlowBuilder getFlowBuilder(ExportParameters parameters) {
+		return BrowserFlow.builder()
 				.addStep(BrowserActions.size(parameters.getWidth(), parameters.getHeight()))
 				.addStep(BrowserActions.openUrl(parameters.getUrl()))
-				.addStep(BrowserActions.sleep(parameters.getDelayMs()))
-				.finish(BrowserActions.pdf());
-		Future<byte[]> resultFuture = executor.submit(() -> {
-			return flow.process(browserFactory.getBrowser());
-		});
-		return resultFuture.get();
+				.addStepIf(StringUtils.isNotBlank(parameters.getIndicatorVariable()),
+						BrowserActions.waitForCondition(parameters.getIndicatorVariable(), conditionalTimeoutProperties))
+				.addStepIf(parameters.getDelaySeconds() > 0,
+						BrowserActions.sleep(parameters.getDelaySeconds(), fixedTimeoutProperties));
 	}
 
 }

@@ -31,8 +31,13 @@ public class BrowserFlow {
 			flow.steps.add(action);
 			return this;
 		}
+		public BrowserFlowBuilder addStepIf(boolean condition, BrowserPrepareAction action) {
+			if (condition)
+				flow.steps.add(action);
+			return this;
+		}
 
-		public BrowserFlow finish(BrowserTerminateAction action) {
+		public BrowserFlow perform(BrowserTerminateAction action) {
 			flow.action = action;
 			return flow;
 		}
