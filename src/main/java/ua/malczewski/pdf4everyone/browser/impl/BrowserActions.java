@@ -45,14 +45,14 @@ public class BrowserActions {
 	}
 
 	public static BrowserPrepareAction waitForCondition(String conditionVariable, ConditionalTimeoutProperties timeouts) {
-		return timedAction(format("waiting for variable 'document.%s", conditionVariable),
+		return timedAction(format("waiting for variable '%s", conditionVariable),
 				browser -> {
 					var wait = new FluentWait<ChromeDriver>(browser.getDriver())
 							.withTimeout(Duration.of(timeouts.getMaxSeconds(), ChronoUnit.SECONDS))
 							.pollingEvery(Duration.of(timeouts.getPollingEverySeconds(), ChronoUnit.SECONDS));
 
 					wait.until(driver -> Boolean.parseBoolean(
-							driver.executeScript("return !!document." + conditionVariable).toString()));
+							driver.executeScript("return !!" + conditionVariable).toString()));
 				});
 	}
 
