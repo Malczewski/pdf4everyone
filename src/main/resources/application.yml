@@ -6,6 +6,9 @@ server:
   port: 9000
   servlet:
     context-path: /api
+  tomcat:
+    mbeanregistry:
+      enabled: true
 
 eureka:
   client:
@@ -26,7 +29,20 @@ logging:
 
 management:
   endpoints:
-    enabled-by-default: true
+    enabled-by-default: false
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    info:
+      enabled: true
+    metrics:
+      enabled: true
+    configprops:
+      enabled: true
+    health:
+      enabled: true
+      show-details: always
 
 webdriver:
   chrome:
