@@ -14,13 +14,18 @@ public class ExportParameters {
 	@QueryParam("url")
 	@NonNull
 	private String url;
+
 	@QueryParam("delaySeconds")
 	private int delaySeconds = 0;
+
+	// TODO allow failing result?
 	@QueryParam("indicatorVariable")
 	private String indicatorVariable = null;
+
 	@QueryParam("width")
 	@NonNull
 	private Integer width;
+
 	@QueryParam("height")
 	@NonNull
 	private Integer height;

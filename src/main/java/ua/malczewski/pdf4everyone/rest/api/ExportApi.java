@@ -1,5 +1,6 @@
 package ua.malczewski.pdf4everyone.rest.api;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ua.malczewski.pdf4everyone.browser.BrowserService;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.Response;
 
 @Path("/export")
 @Component
+@Slf4j
 public class ExportApi {
 
 	@Autowired

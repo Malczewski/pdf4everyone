@@ -5,6 +5,7 @@ import org.glassfish.jersey.jackson.internal.jackson.jaxrs.json.JacksonJaxbJsonP
 import org.glassfish.jersey.server.ResourceConfig;
 import org.springframework.context.annotation.Configuration;
 import ua.malczewski.pdf4everyone.rest.api.ExportApi;
+import ua.malczewski.pdf4everyone.rest.api.exceptions.RestExceptionHandler;
 
 import javax.ws.rs.ext.MessageBodyReader;
 import javax.ws.rs.ext.MessageBodyWriter;
@@ -16,6 +17,8 @@ public class JerseyConfig extends ResourceConfig {
 		register(JacksonFeature.class);
 		register(ObjectMapperProvider.class);
 		register(ExportApi.class);
+
+		register(RestExceptionHandler.class);
 
 	}
 }
